@@ -72,20 +72,22 @@
 
 
         function order() {
+          $.ajax({
+              type: "POST",
+              url: "/homework",
+              data: data_give,
+              success: function (response) {
+                    if (response['result'] == 'success') {
+                        alert(response['msg']);
+                        window.location.reload();
+                    }
+              }
+          })
+      }
             let name = $('#customer').val();
             let count = $('#count').val();
             let address = $('#address').val();
             let phone_number = $('#phone_number').val();
-
-/*
-            if (name != '') {
-                alert(name);
-            }
-            if ( name == ''){
-                alert('이름이 입력됨');
-            }
-*/
-
 
 
             if (name == '') {
@@ -107,8 +109,50 @@
                 alert('주문 완료!');
                 return
             }
-        }
+        
+            let data_give = {
+                name_give = name,
+                count_give = count,
+                address_give = address,
+                phone_number_give = phone_number
+            }
 
+            function listing(){
+                $.ajax({
+              type: "GET",
+              url: "/homework",
+              data: {}
+              success: function (response) {
+                    if (response['result'] == 'success') {
+                        let orders = response['orders']
+
+                        for(i=0; i<orders.length; i++;){
+                            let order = orders[i]
+                            let name = order['name']
+                            let count = order['count']
+                            let address = order['address']
+                            let phone_number =  order['phone_number']
+
+                            make_card(name, count, address, phone_number)
+                        }
+
+                        window.location.reload();
+                    }
+              }
+          })
+
+            }
+
+            function make_Card(){
+                let html =`<tr>
+                    <td>${name}</td>
+                    <td>${address}</td>
+                    <td>${phone_number}</td>
+                </tr>`
+
+                $('orders-box').append(html);
+
+            }
 
     </script>
 </head>
@@ -189,6 +233,24 @@
 
     <div class="order">
         <button onclick="order()" type="button" class="btn btn-primary">주문하기</button>
+    </div>
+    <div class="orders">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="meta_info" scope="col">이름</th>
+                    <th class="meta_info" scope="col">주소</th>
+                    <th scope="col">전화번호</th>
+                </tr>
+            </thead>
+            <tbody id="orders-box">
+                <tr>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                    <td>@mdo</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </body>
 
